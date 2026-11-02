@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Jev</title>
+    <!-- CSP: script from this plugin's own files only, so all logic is in main.js. -->
+    <script src="/__sdk/panel.js"></script>
+    <script src="main.js" defer></script>
+    <style>
+      body { margin: 0; padding: 10px 12px; font: 12px/1.45 system-ui, sans-serif; background: var(--cc-bg); color: var(--cc-fg); }
+      h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--cc-fg-subtle); margin: 14px 0 6px; }
+      .row { display: flex; justify-content: space-between; gap: 8px; }
+      .muted { color: var(--cc-fg-muted); }
+      .warn { background: var(--cc-bg-error); border-left: 3px solid var(--cc-status-ended); padding: 6px 8px; border-radius: 3px; margin: 6px 0; }
+      .bar { height: 6px; background: var(--cc-bg-bar); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+      .bar > div { height: 100%; background: var(--cc-accent); width: 0; }
+      .bar.full > div { background: var(--cc-status-ended); }
+      ul { list-style: none; margin: 0; padding: 0; }
+      li { border-top: 1px solid var(--cc-border); padding: 5px 0; }
+      li .q { word-break: break-word; }
+      li .a { font-family: ui-monospace, monospace; }
+      li.err .a { color: var(--cc-status-ended); }
+      button { font: inherit; color: inherit; background: var(--cc-surface-1); border: 1px solid var(--cc-border); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <div class="row"><strong>Jev</strong><button id="refresh" type="button">Refresh</button></div>
+    <div id="config" class="muted">loading…</div>
+    <div id="notice"></div>
+
+    <h2 id="month-title">This month</h2>
+    <div id="totals"></div>
+
+    <h2>By plugin</h2>
+    <div id="callers"></div>
+
+    <h2>Last requests (this project)</h2>
+    <ul id="recent"></ul>
+  </body>
+</html>

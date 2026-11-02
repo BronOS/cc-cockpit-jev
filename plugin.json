@@ -1,0 +1,112 @@
+{
+  "id": "bronos.jev",
+  "name": "Jev",
+  "version": "0.1.0",
+  "api": 1,
+  "main": "dist/host.js",
+  "description": "Jev, TypeSafe's cheap typed classifier, as the \"jev\" plugin service: choice, yes/no and score questions for other plugins, with a usage log and a monthly cap.",
+  "contributes": {
+    "panels": [
+      {
+        "id": "main",
+        "title": "Jev",
+        "icon": "icons/jev.svg",
+        "entry": "panels/main.html",
+        "defaultZone": "right"
+      }
+    ],
+    "settings": {
+      "app": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "title": "Endpoint",
+            "description": "Where requests go. Cost, balance and the dollar cap work only with OpenRouter. A custom base URL gets /v1/systemone appended.",
+            "default": "openrouter",
+            "oneOf": [
+              {
+                "const": "openrouter",
+                "title": "OpenRouter (https://openrouter.ai/api)"
+              },
+              {
+                "const": "typesafe",
+                "title": "TypeSafe direct (https://api.typesafe.ai)"
+              },
+              {
+                "const": "custom",
+                "title": "Custom base URL (below)"
+              }
+            ]
+          },
+          "customBaseUrl": {
+            "type": "string",
+            "title": "Custom base URL",
+            "description": "Only used when Endpoint is Custom, e.g. a LiteLLM proxy. https, or http for localhost only.",
+            "maxLength": 512,
+            "default": ""
+          },
+          "apiKey": {
+            "type": "string",
+            "format": "secret",
+            "title": "API key",
+            "description": "The OpenRouter key, or the TypeSafe key for TypeSafe direct. Sent as a bearer token to the endpoint above only."
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Pinned so question thresholds stay valid. OpenRouter id: typesafe/jev-1.13. TypeSafe direct may want its own id (e.g. jev-latest).",
+            "minLength": 1,
+            "maxLength": 128,
+            "default": "typesafe/jev-1.13"
+          },
+          "monthlyCapUsd": {
+            "type": "number",
+            "title": "Monthly spending cap ($)",
+            "description": "Requests are refused once this month's cost (UTC month, all projects) reaches it. 0 turns it off. OpenRouter only: other endpoints report no cost.",
+            "minimum": 0,
+            "maximum": 10000,
+            "default": 5
+          },
+          "monthlyRequestCap": {
+            "type": "integer",
+            "title": "Monthly request cap",
+            "description": "Refuse requests past this many in a month, any endpoint. 0 turns it off. The cap to use where cost is unknown.",
+            "minimum": 0,
+            "maximum": 100000000,
+            "default": 0
+          },
+          "monthlyTokenCap": {
+            "type": "integer",
+            "title": "Monthly token cap",
+            "description": "Refuse requests once this month's input tokens reach it, any endpoint. 0 turns it off.",
+            "minimum": 0,
+            "maximum": 100000000000,
+            "default": 0
+          },
+          "timeoutSeconds": {
+            "type": "number",
+            "title": "Request timeout (s)",
+            "description": "Budget for one request, retries and backoff included.",
+            "minimum": 1,
+            "maximum": 120,
+            "default": 30
+          }
+        }
+      }
+    },
+    "cli": [
+      {
+        "name": "jev",
+        "summary": "Jev usage, OpenRouter balance, or one request from stdin",
+        "usage": "jev [usage | balance | ask [--label L] < request.json | help]",
+        "stdin": true
+      }
+    ]
+  },
+  "services": {
+    "provides": {
+      "jev": 1
+    }
+  }
+}
