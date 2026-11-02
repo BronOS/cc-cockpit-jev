@@ -1,6 +1,6 @@
 'use strict'
 // The Jev client: request validation, the POST <base>/v1/systemone call with retries, and the
-// OpenRouter balance. A port of ~/Projects/claude-config/jev/jev (Python) to fetch, kept free of
+// OpenRouter balance. A port of the reference Python client (`jev ask` / `jev grid`) to fetch, kept free of
 // `ctx` so it is unit-tested under plain node (test/client.test.js).
 //
 // Choices only, on purpose: a question must be one of Jev's typed kinds (noul = yes/no probability,
