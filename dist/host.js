@@ -183,6 +183,21 @@ exports.activate = (ctx) => {
   // ---- balance (OpenRouter only) ----
 
   async function refreshBalance() {
+    if (refreshing) return refreshing
+    refreshing = (async () => {
+      setHeader(true)
+      try {
+        await refreshBalanceOnce()
+      } finally {
+        refreshing = null
+        setHeader(false)
+      }
+    })()
+    return refreshing
+  }
+  let refreshing = null
+
+  async function refreshBalanceOnce() {
     let cfg
     try {
       cfg = client.resolveConfig(app())
@@ -202,6 +217,29 @@ exports.activate = (ctx) => {
   disposers.push(ctx.schedule(BALANCE_EVERY_S, refreshBalance))
 
   // ---- panel ----
+
+  // The panel's title bar (cc-cockpit 0.9.0+, ctx.panels.header): Refresh as a ↻ icon that spins
+  // while the balance is read. Feature-detected: on an older app the page keeps its own button.
+  const coreHeader = typeof ctx.panels.header === 'function'
+  function setHeader(busy) {
+    if (!coreHeader) return
+    try {
+      ctx.panels.header(PANEL, { actions: [{ id: 'refresh', icon: 'refresh', title: 'Refresh the usage and the balance', busy: Boolean(busy) }] })
+    } catch (e) {
+      ctx.log.warn(`panel header: ${(e && e.message) || e}`)
+    }
+  }
+  if (coreHeader) {
+    setHeader(false)
+    disposers.push(
+      ctx.panels.onAction(PANEL, (id) => {
+        if (id !== 'refresh') return
+        // A click always reads the balance again (the page's own refresh only when it is stale).
+        void refreshBalance()
+        pushPanel()
+      }),
+    )
+  }
 
   async function snapshot() {
     let config
@@ -225,6 +263,8 @@ exports.activate = (ctx) => {
       recent: await usage.recent(RECENT),
       balance: config.isOpenRouter ? balanceState : null,
       refusal: capRefusal(all, caps(), { isOpenRouter: !!config.isOpenRouter, month }),
+      // The title bar has the title and ↻: the page leaves out its own row.
+      coreHeader,
     }
   }
 

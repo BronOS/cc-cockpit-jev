@@ -133,3 +133,57 @@ test('cli: help, unknown subcommand, ask counted as cli', async () => {
   assert.match((await ctx.cli.jev([], { stdin: '' })).stdout, /\n  cli: 1 requests/)
   host.deactivate()
 })
+
+test('title bar (cc-cockpit 0.9.0+): ↻ in the header, spinning while the balance is read; a click reads it again', async () => {
+  // A balance request that waits until the test releases it, so the spinning state can be seen.
+  // A balance read is two requests in a row (/v1/key, then /v1/credits): once released, every
+  // request (the waiting one and later ones) answers at once, until the test holds them again.
+  const calls = []
+  let held = true
+  const waiting = []
+  const answer = () => ({ ok: true, status: 200, headers: new Map(), text: async () => JSON.stringify({ data: { total_credits: 10, total_usage: 1 } }) })
+  globalThis.fetch = (url) => {
+    calls.push(url)
+    if (!held) return Promise.resolve(answer())
+    return new Promise((resolve) => waiting.push(() => resolve(answer())))
+  }
+  const release = () => {
+    held = false
+    for (const go of waiting.splice(0)) go()
+  }
+  const hold = () => {
+    held = true
+  }
+  delete require.cache[require.resolve('../dist/host.js')]
+  const host = require('../dist/host.js')
+  const ctx = fakeCtx()
+  const headers = []
+  let onAction = null
+  ctx.panels.header = (id, h) => headers.push(structuredClone(h))
+  ctx.panels.onAction = (id, fn) => ((onAction = fn), () => {})
+  host.activate(ctx)
+  // The activation's balance read is running: the icon spins.
+  assert.equal(headers.at(-1).actions[0].id, 'refresh')
+  assert.equal(headers.at(-1).actions[0].icon, 'refresh')
+  assert.equal(headers.at(-1).actions[0].busy, true)
+  release()
+  await new Promise((r) => setTimeout(r, 10))
+  assert.equal(headers.at(-1).actions[0].busy, false)
+  const before = calls.length
+  hold()
+  onAction('refresh')
+  assert.equal(headers.at(-1).actions[0].busy, true)
+  release()
+  await new Promise((r) => setTimeout(r, 10))
+  assert.ok(calls.length > before, 'the click read the balance again')
+  host.deactivate()
+})
+
+test('without ctx.panels.header (cc-cockpit 0.8) nothing breaks and the page keeps its own row', async () => {
+  stubFetch(() => ({ data: { total_credits: 10, total_usage: 1 } }))
+  const { host, ctx } = load()
+  await new Promise((r) => setTimeout(r, 400))
+  const st = ctx.posts.find((m) => m && m.type === 'state')
+  if (st) assert.equal(st.coreHeader, false)
+  host.deactivate()
+})

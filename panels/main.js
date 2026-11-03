@@ -42,6 +42,8 @@ const kv = (k, v) => {
 }
 
 function render(s) {
+  // On cc-cockpit 0.9.0+ the title bar carries the title and ↻ (the host sets it); this row goes.
+  $('own-header').style.display = s.coreHeader ? 'none' : ''
   const c = s.config
   $('config').textContent = c.ok ? `${c.endpoint} · ${c.model}` : `Not configured: ${c.error}`
 
