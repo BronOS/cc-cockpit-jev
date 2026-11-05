@@ -1,7 +1,7 @@
 {
   "id": "bronos.jev",
   "name": "Jev",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "api": 1,
   "main": "dist/host.js",
   "description": "Jev, TypeSafe's cheap typed classifier, as the \"jev\" plugin service: choice, yes/no and score questions for other plugins, with a usage log and a monthly cap.",
