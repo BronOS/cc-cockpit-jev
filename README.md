@@ -40,7 +40,7 @@ Call it from a command or after `activate` has returned, not during `activate` (
 
 - Endpoint: `openrouter` (https://openrouter.ai/api), `typesafe` (TypeSafe direct,
   https://api.typesafe.ai), or `custom` (with Custom base URL; https, or http to localhost).
-- API key (a secret field), Model (default `typesafe/jev-1.13`), Request timeout.
+- API key (a secret field), Model (default `typesafe/jev-1.14`), Request timeout.
 - Monthly spending cap in dollars (default $5). It counts the cost OpenRouter reports, so it works on OpenRouter only.
   The monthly request cap and token cap work on any endpoint; 0 turns a cap off.
 

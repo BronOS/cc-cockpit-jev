@@ -55,10 +55,10 @@
           "model": {
             "type": "string",
             "title": "Model",
-            "description": "Pinned so question thresholds stay valid. OpenRouter id: typesafe/jev-1.13. TypeSafe direct may want its own id (e.g. jev-latest).",
+            "description": "Pinned so question thresholds stay valid. OpenRouter id: typesafe/jev-1.14. TypeSafe direct may want its own id (e.g. jev-latest).",
             "minLength": 1,
             "maxLength": 128,
-            "default": "typesafe/jev-1.13"
+            "default": "typesafe/jev-1.14"
           },
           "monthlyCapUsd": {
             "type": "number",

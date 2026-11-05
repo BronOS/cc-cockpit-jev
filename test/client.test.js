@@ -28,7 +28,7 @@ function fakeFetch(script) {
 test('resolveConfig: endpoints, defaults and refusals', () => {
   const or = c.resolveConfig(KEY)
   assert.equal(or.baseUrl, 'https://openrouter.ai/api')
-  assert.equal(or.model, 'typesafe/jev-1.13')
+  assert.equal(or.model, 'typesafe/jev-1.14')
   assert.equal(or.isOpenRouter, true)
   const ts = c.resolveConfig({ ...KEY, endpoint: 'typesafe' })
   assert.equal(ts.baseUrl, 'https://api.typesafe.ai')
@@ -67,7 +67,7 @@ test('call: request shape and usage', async () => {
   const r = await c.call(cfg, 'text', NOUL, { fetch: f })
   assert.equal(f.calls[0].url, 'https://openrouter.ai/api/v1/systemone')
   assert.equal(f.calls[0].init.headers.Authorization, 'Bearer sk-test')
-  assert.deepEqual(JSON.parse(f.calls[0].init.body), { model: 'typesafe/jev-1.13', state: 'text', questions: NOUL })
+  assert.deepEqual(JSON.parse(f.calls[0].init.body), { model: 'typesafe/jev-1.14', state: 'text', questions: NOUL })
   assert.equal(r.tokens, 120)
   assert.equal(r.reportedCost, 0.00001)
 })

@@ -82,7 +82,7 @@ function resolveConfig(app) {
   }
   const key = typeof app.apiKey === 'string' ? app.apiKey.trim() : ''
   if (!key) throw new JevError('no API key: set it in Settings > Plugins > Jev')
-  const model = (typeof app.model === 'string' && app.model.trim()) || 'typesafe/jev-1.13'
+  const model = (typeof app.model === 'string' && app.model.trim()) || 'typesafe/jev-1.14'
   return {
     endpoint,
     baseUrl: url.href.replace(/\/+$/, ''),
